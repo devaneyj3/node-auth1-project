@@ -10,15 +10,26 @@ const bcrypt = require('bcryptjs')
 routes.post('/register', async (req, res) => {
     const hash = bcrypt.hashSync(req.body.password, 10);
     req.body.password = hash;
-    const addAdmin = await db.PostAdmin(req.body)
-    
+    await db.PostAdmin(req.body)
+
     res.status(201).send(req.body)
 })
 
-// //GET login user
-// routes.get('/', (req, res) => {
-//     res.status(201).send(stuff)
-// })
+//GET login user
+routes.post('/login', async(req, res) => {
+    const { username, password} = req.body;
+
+    //finds admin with the passed in username
+    const user = await db.findAdmin(username)
+
+    //compare hashes of passwords with the specific username hash
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+        res.status(401).json({ error: 'Invalid Credentials' })
+    }
+    else {
+        res.status(200).json({ message: `Welcome, ${user.username}` })
+    }
+})
 
 // //GET USERS WHEN LOGGED IN
 // routes.get('/', (req, res) => {

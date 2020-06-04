@@ -31,10 +31,16 @@ routes.post('/login', async(req, res) => {
     }
 })
 
-// //GET USERS WHEN LOGGED IN
-// routes.get('/', (req, res) => {
-//     res.status(204).send(stuff)
-// })
+//GET USERS WHEN LOGGED IN
+routes.get('/users', async (req, res) => {
+    try {
+        const users = await db.getUsers()
+        res.status(200).send(users)
+        
+    } catch (err) {
+        res.status(500).json({message: "There is an error with the server"})
+    }
+})
 
 
 module.exports = routes;
